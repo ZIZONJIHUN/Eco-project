@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ecebe5">
+<title>효명 급식 탄소</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --bg:#dfddd5; --app:#ecebe5; --card:#ffffff; --line:#d9d6cc; --line2:#ebe9e2;
+  --ink:#121a16; --ink2:#38413b; --ink3:#69706a; --ink4:#9a9f98;
+  --deep:#10211b; --on-deep:#f3f1ea; --on-deep2:#9fb0a7; --accent:#c4ea6b;
+  --brand:#1d6b50; --brand-soft:#e2ece4;
+  --low:#2f9a6c; --low-bg:#e3efe6; --mid:#cf8f17; --mid-bg:#f6ecd6; --high:#d6492a; --high-bg:#f7e2da;
+  --warn:#b4231a; --warn-bg:#f9e4e1;
+  --r:10px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;word-break:keep-all;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.app{max-width:440px;margin:0 auto;min-height:100vh;background:var(--app);position:relative;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+@media(min-width:480px){.app{box-shadow:0 0 0 1px var(--line),0 24px 60px rgba(0,0,0,.08)}}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;background:rgba(236,235,229,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{height:24px;display:block}
+.icon-btn{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line);position:relative}
+.icon-btn svg{width:19px;height:19px}
+.icon-btn:disabled{opacity:.35}
+.icon-btn .dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--warn);box-shadow:0 0 0 2px #fff}
+
+.view{display:none;padding:14px 16px 28px}
+.view.on{display:block;animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+/* date strip */
+.datebar{display:flex;align-items:center;gap:6px;margin:0 0 12px}
+.datebar .arrow{width:30px;height:44px;display:grid;place-items:center;color:var(--ink2)}
+.datebar .arrow:disabled{opacity:.25}
+.days{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.dchip{border-radius:8px;padding:7px 0 8px;text-align:center;border:1px solid transparent;transition:background .15s}
+.dchip small{display:block;font-size:11.5px;color:var(--ink3);font-weight:500}
+.dchip b{display:block;font-size:17px;font-weight:700;margin-top:1px}
+.dchip i{display:block;width:16px;height:3px;border-radius:2px;margin:5px auto 0}
+.dchip.on{background:var(--deep);color:var(--on-deep);border-color:var(--deep)}
+.dchip.on small{color:var(--on-deep2)}
+.dchip.empty{opacity:.25;pointer-events:none}
+
+/* hero */
+.hero{background:var(--deep);color:var(--on-deep);border-radius:12px;padding:18px 18px 16px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(196,234,107,.14),transparent 70%);pointer-events:none}
+.hero-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--on-deep2);font-weight:500}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:4px}
+.pill.저{color:#0f2a1d;background:#7fd3a6} .pill.중{color:#2b1d00;background:#f0c35a} .pill.고{color:#fff;background:#e0583a}
+.hero-val{display:flex;align-items:baseline;gap:6px;margin:12px 0 4px}
+.hero-val b{font-size:48px;font-weight:800;letter-spacing:-.045em;line-height:1}
+.hero-val span{font-size:14px;color:var(--on-deep2);font-weight:600}
+.hero-sub{font-size:13.5px;color:var(--on-deep2)}
+.hero-sub b{color:var(--accent);font-weight:700}
+.gauge{margin:18px 0 6px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--low) 0 25%,var(--mid) 25% 50%,var(--high) 50% 100%);position:relative}
+.gauge i{position:absolute;top:50%;width:4px;height:18px;border-radius:2px;background:var(--on-deep);box-shadow:0 0 0 3px var(--deep);transform:translate(-50%,-50%);transition:left .35s cubic-bezier(.2,.8,.2,1)}
+.gauge-l{display:flex;justify-content:space-between;font-size:11px;color:var(--on-deep2);font-weight:500;opacity:.8}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:16px;border-top:1px solid rgba(255,255,255,.1);padding-top:13px}
+.stats div+div{border-left:1px solid rgba(255,255,255,.1);padding-left:12px}
+.stats small{display:block;font-size:11.5px;color:var(--on-deep2);font-weight:500}
+.stats b{display:block;font-size:16px;font-weight:700;margin-top:3px}
+.stats .up{color:#ff8a6e} .stats .down{color:#7fd3a6}
+
+.alert{display:flex;gap:10px;align-items:flex-start;margin-top:10px;background:var(--warn-bg);color:var(--warn);border-left:3px solid var(--warn);border-radius:6px;padding:11px 13px;font-size:13.5px;font-weight:600;line-height:1.45}
+.alert svg{flex:none;width:18px;height:18px;margin-top:1px}
+
+.sec{display:flex;justify-content:space-between;align-items:baseline;margin:26px 2px 10px}
+.sec h2{margin:0;font-size:17px;font-weight:800;letter-spacing:-.03em}
+.sec span{font-size:12px;color:var(--ink3)}
+
+/* menu list */
+.list{background:var(--card);border-radius:var(--r);border:1px solid var(--line);overflow:hidden}
+.item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px 14px 14px 0}
+.item+.item{border-top:1px solid var(--line2)}
+.item:active{background:#f7f6f2}
+.dotg{flex:none;width:3px;align-self:stretch;border-radius:0 2px 2px 0}
+.dotg.저,i.저{background:var(--low)} .dotg.중,i.중{background:var(--mid)} .dotg.고,i.고{background:var(--high)}
+.item-main{flex:1;min-width:0;padding-left:2px}
+.item-name{font-size:15.5px;font-weight:600;letter-spacing:-.015em;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tag-al{font-size:11px;font-weight:700;color:var(--warn);background:var(--warn-bg);padding:2px 6px;border-radius:4px}
+.bar{height:4px;border-radius:2px;background:var(--line2);margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:2px}
+.item-val{text-align:right;flex:none}
+.item-val b{font-size:15px;font-weight:700}
+.item-val small{display:block;font-size:11px;color:var(--ink4);margin-top:1px}
+.chev{flex:none;color:var(--ink4);width:15px;height:15px}
+
+.tip{margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;gap:12px;align-items:center;width:100%;text-align:left}
+.tip .ic{flex:none;width:38px;height:38px;border-radius:8px;background:var(--deep);display:grid;place-items:center;font-size:18px}
+.tip b{display:block;font-size:14.5px;color:var(--ink);font-weight:700}
+.tip span{display:block;font-size:13px;color:var(--ink3);margin-top:2px;line-height:1.45}
+
+/* week */
+.weekhead{display:flex;align-items:center;justify-content:space-between;margin:0 0 12px}
+.weekhead b{font-size:17px;font-weight:800;letter-spacing:-.02em}
+.weekhead small{display:block;font-size:12.5px;color:var(--ink3);margin-top:2px;font-weight:500}
+.weekchart{background:var(--deep);color:var(--on-deep);border-radius:12px;padding:16px 16px 12px}
+.wsum{display:grid;grid-template-columns:1fr 1fr 1fr;padding-bottom:14px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.wsum div+div{border-left:1px solid rgba(255,255,255,.1);padding-left:12px}
+.wsum small{display:block;font-size:11.5px;color:var(--on-deep2);font-weight:500}
+.wsum b{display:block;font-size:20px;font-weight:800;margin-top:3px;letter-spacing:-.03em}
+.wsum b em{font-style:normal;font-size:12px;color:var(--on-deep2);font-weight:600;margin-left:2px}
+.wsum .up{color:#ff8a6e} .wsum .down{color:#7fd3a6}
+.wplot{position:relative}
+.wavg{position:absolute;left:0;right:0;border-top:1.5px dashed rgba(243,241,234,.45);pointer-events:none}
+.wnote{display:flex;align-items:center;gap:6px;justify-content:flex-end;font-size:11px;color:var(--on-deep2);margin-top:10px}
+.wnote u{display:inline-block;width:16px;border-top:1.5px dashed rgba(243,241,234,.45)}
+.wbars{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:end;height:140px}
+.wbar.low i{box-shadow:0 0 0 2px var(--deep),0 0 0 4px var(--accent)}
+.wlabels b{display:block;font-size:14px;color:var(--on-deep);font-weight:700}
+.wbar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px}
+.wbar span{font-size:12px;font-weight:700}
+.wbar i{width:100%;max-width:30px;border-radius:3px;min-height:4px;transition:height .4s cubic-bezier(.2,.8,.2,1)}
+.wbar.none i{background:rgba(255,255,255,.08)!important}
+.wlabels{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1);text-align:center;font-size:12px;color:var(--on-deep2);font-weight:500}
+.wcard{display:flex;gap:14px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--line);border-radius:var(--r);padding:13px 14px;margin-top:8px;align-items:center}
+.wcard.저{border-left-color:var(--low)} .wcard.중{border-left-color:var(--mid)} .wcard.고{border-left-color:var(--high)}
+.wcard .wm p.sub{font-size:12.5px;font-weight:500;color:var(--ink3);margin-top:2px}
+.wtags{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+.wtags i{font-style:normal;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--line2);color:var(--ink2)}
+.wtags i.hi{background:var(--high-bg);color:var(--high)} .wtags i.best{background:var(--accent);color:var(--deep)} .wtags i.al{background:var(--warn-bg);color:var(--warn)}
+.wcard .wd{flex:none;width:38px;text-align:center;border-right:1px solid var(--line2);padding-right:12px;box-sizing:content-box}
+.wcard .wd small{display:block;font-size:12px;color:var(--ink3);font-weight:500}
+.wcard .wd b{display:block;font-size:20px;font-weight:800}
+.wcard .wm{flex:1;min-width:0}
+.wcard .wm p{margin:0;font-size:14px;font-weight:600;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wcard .wm span{display:block;font-size:12.5px;color:var(--ink3);margin-top:3px}
+.wcard .badge{font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-soft);padding:2px 6px;border-radius:4px;margin-left:4px}
+.wcard .wv{text-align:right;flex:none}
+.wcard .wv b{font-size:16px;font-weight:800}
+.wcard .wv small{display:block;font-size:11px;color:var(--ink4)}
+
+/* insight */
+.cards2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.mini.dark{background:var(--deep);border-color:var(--deep);color:var(--on-deep)}
+.mini.dark small,.mini.dark span,.mini.dark b em{color:var(--on-deep2)}
+.mini small{display:block;font-size:12px;color:var(--ink3);font-weight:500}
+.mini b{display:block;font-size:24px;font-weight:800;margin-top:6px;letter-spacing:-.03em}
+.mini b em{font-style:normal;font-size:13px;color:var(--ink3);font-weight:600;margin-left:2px}
+.mini span{display:block;font-size:11.5px;color:var(--ink4);margin-top:4px;line-height:1.4}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 14px}
+.panel h3{margin:0 0 4px;font-size:15.5px;font-weight:700}
+.panel p.d{margin:0 0 14px;font-size:12.5px;color:var(--ink3);line-height:1.5}
+.headline{font-size:14.5px;font-weight:600;line-height:1.55;margin:0 0 14px;color:var(--ink2)}
+.headline b{color:var(--ink);font-weight:800}
+.mrow{display:grid;grid-template-columns:30px 1fr 40px;align-items:center;gap:10px;padding:5px 0}
+.mrow em{font-style:normal;font-size:13px;font-weight:600;color:var(--ink2)}
+.mrow .track{height:22px;background:var(--line2);border-radius:3px;position:relative}
+.mrow .track i{position:absolute;left:0;top:0;bottom:0;border-radius:3px}
+.mrow .track u{position:absolute;top:-3px;bottom:-3px;border-left:1.5px dashed var(--ink);opacity:.45}
+.mrow b{font-size:13.5px;font-weight:700;text-align:right}
+.mrow.peak em,.mrow.peak b{color:var(--high)}
+.mrow.few{opacity:.4}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink3);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px}
+.legend u{display:inline-block;width:0;height:12px;border-left:1.5px dashed var(--ink);opacity:.45}
+.rank{display:flex;align-items:center;gap:10px;padding:10px 0}
+.rank+.rank{border-top:1px solid var(--line2)}
+.rank em{font-style:normal;width:20px;font-size:13px;font-weight:800;color:var(--ink4)}
+.rank div{flex:1;min-width:0}
+.rank p{margin:0;font-size:14px;font-weight:600}
+.rank b{font-size:14px;font-weight:700}
+.note{font-size:12px;color:var(--ink3);line-height:1.6;border-top:1px solid var(--line2);padding-top:10px;margin-top:12px}
+details.acc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-top:8px}
+details.acc summary{list-style:none;padding:15px 14px;font-size:15px;font-weight:700;display:flex;justify-content:space-between;cursor:pointer}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::after{content:"+";color:var(--ink3);font-weight:500}
+details.acc[open] summary::after{content:"−"}
+details.acc .body{padding:0 14px 16px;font-size:13px;color:var(--ink2);line-height:1.65}
+details.acc .body ul{margin:0;padding-left:18px}
+details.acc .body li+li{margin-top:6px}
+
+/* tab bar */
+.tabs{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:440px;z-index:30;background:var(--deep);display:grid;grid-template-columns:repeat(3,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;font-size:11.5px;font-weight:600;color:#7d8d85;position:relative}
+.tab svg{width:22px;height:22px}
+.tab.on{color:var(--on-deep)}
+.tab.on::before{content:"";position:absolute;top:-6px;left:50%;width:22px;height:3px;border-radius:0 0 2px 2px;background:var(--accent);transform:translateX(-50%)}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(8,14,11,.5);z-index:40;opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:50%;bottom:0;width:100%;max-width:440px;z-index:50;background:var(--app);border-radius:14px 14px 0 0;transform:translate(-50%,105%);visibility:hidden;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s .32s;max-height:88vh;overflow-y:auto;padding:10px 16px calc(24px + env(safe-area-inset-bottom))}
+.sheet.on{transform:translate(-50%,0);visibility:visible;transition:transform .32s cubic-bezier(.2,.8,.2,1)}
+.grab{width:36px;height:4px;border-radius:2px;background:#c9c6bc;margin:0 auto 14px}
+.sh-title{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:0 2px}
+.sh-title h3{margin:0;font-size:21px;font-weight:800;letter-spacing:-.035em;line-height:1.3}
+.sh-title p{margin:4px 0 0;font-size:13px;color:var(--ink3)}
+.close{flex:none;width:32px;height:32px;border-radius:8px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center}
+.close svg{width:15px;height:15px}
+.sh-box{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 14px;margin-top:10px}
+.sh-box.dark{background:var(--deep);border-color:var(--deep);color:var(--on-deep)}
+.sh-box h4{margin:0 0 12px;font-size:14.5px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
+.sh-box h4 span{font-size:12px;color:var(--ink3);font-weight:500}
+.ing{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:8px 0}
+.ing+.ing{border-top:1px solid var(--line2)}
+.ing p{margin:0;font-size:14px;font-weight:600}
+.ing p small{font-weight:500;color:var(--ink3);margin-left:4px}
+.ing b{font-size:14px;font-weight:700;text-align:right}
+.ing .bar{grid-column:1/-1;margin-top:5px}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);background:rgba(255,255,255,.08);border-radius:8px;padding:3px;gap:3px}
+.seg button{padding:9px 0;border-radius:6px;font-size:13.5px;font-weight:600;color:var(--on-deep2)}
+.seg button.on{background:var(--accent);color:var(--deep)}
+.waste{display:flex;align-items:baseline;gap:6px;margin-top:16px}
+.waste b{font-size:34px;font-weight:800;letter-spacing:-.04em}
+.waste span{font-size:13.5px;color:var(--on-deep2);font-weight:600}
+.waste-sub{font-size:13px;color:var(--on-deep2);margin-top:4px;line-height:1.5}
+.alt{display:flex;align-items:center;gap:10px}
+.alt .from,.alt .to{flex:1;border-radius:8px;padding:12px;text-align:center}
+.alt .from{background:var(--high-bg)} .alt .to{background:var(--low-bg)}
+.alt small{display:block;font-size:11.5px;color:var(--ink3);font-weight:500}
+.alt b{display:block;font-size:18px;font-weight:800;margin-top:3px}
+.alt svg{flex:none;width:18px;color:var(--ink4)}
+.alg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.alg{padding:11px 4px;border-radius:8px;background:var(--card);border:1px solid var(--line);font-size:13.5px;font-weight:600;color:var(--ink2)}
+.alg.on{background:var(--warn-bg);color:var(--warn);border-color:var(--warn)}
+.cta{width:100%;margin-top:14px;padding:15px;border-radius:10px;background:var(--deep);color:var(--on-deep);font-size:15px;font-weight:700}
+.muted{font-size:12.5px;color:var(--ink3);line-height:1.55;margin:10px 2px 0}
+.foot{text-align:center;font-size:11.5px;color:var(--ink4);margin-top:24px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <img src="hyomyung-logo.png" alt="효명고등학교">
+    </div>
+    <button class="icon-btn" id="openAlg" aria-label="알레르기 설정">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+      <i class="dot" id="algDot" hidden></i>
+    </button>
+  </header>
+
+  <!-- 오늘 -->
+  <section class="view on" id="v-today">
+    <div class="datebar">
+      <button class="arrow" id="prevW" aria-label="이전 주"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="days" id="dayChips"></div>
+      <button class="arrow" id="nextW" aria-label="다음 주"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+    <div class="hero">
+      <div class="hero-head"><span id="hDate"></span><span class="pill" id="hGrade"></span></div>
+      <div class="hero-val"><b class="num" id="hKg"></b><span>kgCO₂e</span></div>
+      <div class="hero-sub" id="hSub"></div>
+      <div class="gauge"><i id="hGauge"></i></div>
+      <div class="gauge-l"><span>0</span><span>1.5</span><span>3</span><span>6 kg</span></div>
+      <div class="stats">
+        <div><small>공식 열량</small><b class="num" id="sKcal"></b></div>
+        <div><small>단백질</small><b class="num" id="sProt"></b></div>
+        <div><small>학교 평균 대비</small><b class="num" id="sAvg"></b></div>
+      </div>
+    </div>
+    <div id="algAlert"></div>
+    <div class="sec"><h2>메뉴</h2><span>누르면 재료와 줄이는 방법</span></div>
+    <div class="list" id="menuList"></div>
+    <button class="tip" id="tipBtn"></button>
+  </section>
+
+  <!-- 이번 주 -->
+  <section class="view" id="v-week">
+    <div class="weekhead">
+      <button class="arrow icon-btn" id="wPrev" aria-label="이전 주"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div style="text-align:center"><b id="wTitle"></b><small id="wSub"></small></div>
+      <button class="arrow icon-btn" id="wNext" aria-label="다음 주"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+    <div class="weekchart">
+      <div class="wsum" id="wSum"></div>
+      <div class="wplot"><div class="wbars" id="wBars"></div><u class="wavg" id="wAvg"></u></div>
+      <div class="wlabels" id="wLabels"></div>
+      <div class="wnote"><u></u><span id="wNote"></span></div>
+    </div>
+    <div class="sec"><h2>요일별 식단</h2><span>누르면 그날 메뉴로 이동</span></div>
+    <div id="wList"></div>
+  </section>
+
+  <!-- 분석 -->
+  <section class="view" id="v-insight">
+    <div class="sec" style="margin-top:8px"><h2 id="iTitle"></h2><span id="iPeriod"></span></div>
+    <div class="cards2" id="iCards"></div>
+    <div class="sec"><h2>달마다 한 끼 탄소</h2><span>1인 기준 월평균</span></div>
+    <div class="panel trend"><div id="trend"></div></div>
+    <div class="sec"><h2>탄소가 많은 메뉴</h2><span>Top 10</span></div>
+    <div class="panel" id="top10"></div>
+    <div class="sec"><h2>AI 추정 검증</h2></div>
+    <div class="panel" id="verify"></div>
+    <details class="acc"><summary>계산 방법</summary><div class="body" id="method"></div></details>
+    <details class="acc"><summary>출처</summary><div class="body" id="sources"></div></details>
+    <p class="foot">효명고 1학년 ○○○ · 환경 + 진로 탐구 프로젝트<br>급식 데이터: 나이스 교육정보 개방 포털</p>
+  </section>
+
+  <nav class="tabs">
+    <button class="tab on" data-v="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M8 7c0-1.5 1-2 1-3M12 7c0-1.5 1-2 1-3M16 7c0-1.5 1-2 1-3"/></svg>오늘 급식</button>
+    <button class="tab" data-v="week"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>이번 주</button>
+    <button class="tab" data-v="insight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>분석</button>
+  </nav>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const ALLERGENS = ['난류','우유','메밀','땅콩','대두','밀','고등어','게','새우','돼지고기','복숭아','토마토','아황산류','호두','닭고기','쇠고기','오징어','조개류','잣'];
+const KM_PER_KG = 1/0.2; // 승용차 1km ≈ 0.2 kgCO₂e (대략값)
+const TODAY = '2026-10-31';
+const GRADE1 = 310; // 1학년 학생 수(대략)
+const WD = ['일','월','화','수','목','금','토'];
+const $ = id => document.getElementById(id);
+const fmt = (v, d=2) => v.toFixed(d);
+const gradeColor = g => ({저:'var(--low)',중:'var(--mid)',고:'var(--high)'})[g];
+
+const store = {
+  get(){ try { return JSON.parse(localStorage.getItem('hm-allergy')||'[]'); } catch(e){ return []; } },
+  set(v){ try { localStorage.setItem('hm-allergy', JSON.stringify(v)); } catch(e){} }
+};
+let myAlg = store.get();
+
+const days = DATA.days;
+const byDate = Object.fromEntries(days.map(d => [d.d, d]));
+const parse = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const iso = dt => `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+const monday = s => { const dt = parse(s); dt.setDate(dt.getDate() - ((dt.getDay()+6)%7)); return dt; };
+const weekDates = mon => [0,1,2,3,4].map(i => { const d = new Date(mon); d.setDate(d.getDate()+i); return iso(d); });
+const weeks = [...new Set(days.map(d => iso(monday(d.d))))];
+
+let cur = (days.find(d => d.d >= TODAY) || days[days.length-1]).d;
+let weekIdx = weeks.indexOf(iso(monday(cur)));
+
+function hitAlg(menu){ return menu.al.filter(n => myAlg.includes(n)); }
+
+/* ---------- 오늘 ---------- */
+function renderToday(){
+  const day = byDate[cur];
+  const mon = monday(cur);
+  const wk = weekDates(mon);
+  $('dayChips').innerHTML = wk.map(s => {
+    const d = byDate[s], dt = parse(s);
+    return `<button class="dchip ${s===cur?'on':''} ${d?'':'empty'}" data-d="${s}"><small>${WD[dt.getDay()]}</small><b>${dt.getDate()}</b><i class="${d?d.g:''}"></i></button>`;
+  }).join('');
+  const wi = weeks.indexOf(iso(mon));
+  $('prevW').disabled = wi <= 0; $('nextW').disabled = wi >= weeks.length-1;
+
+  const dt = parse(cur);
+  const rel = cur === TODAY ? '오늘' : (cur > TODAY && !days.some(d => d.d > TODAY && d.d < cur)) ? '다음 급식' : '';
+  $('hDate').textContent = `${dt.getMonth()+1}월 ${dt.getDate()}일 ${WD[dt.getDay()]}요일 점심${rel ? ' · '+rel : ''}`;
+  $('hGrade').className = 'pill ' + day.g;
+  $('hGrade').textContent = {저:'저탄소',중:'중간',고:'고탄소'}[day.g];
+  $('hKg').textContent = fmt(day.kg);
+  $('hSub').innerHTML = `승용차로 약 <b>${Math.round(day.kg*KM_PER_KG)}km</b> 달릴 때 나오는 양입니다`;
+  $('hGauge').style.left = Math.min(day.kg/6, 1)*100 + '%';
+  $('sKcal').textContent = Math.round(day.kcalO) + ' kcal';
+  $('sProt').textContent = day.ntr.prot != null ? day.ntr.prot + ' g' : '-';
+  const diff = (day.kg - DATA.summary.avg) / DATA.summary.avg * 100;
+  $('sAvg').innerHTML = `<span class="${diff>0?'up':'down'}">${diff>0?'+':''}${Math.round(diff)}%</span>`;
+
+  const hits = day.menus.filter(m => hitAlg(m).length);
+  $('algAlert').innerHTML = hits.length ? `<div class="alert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><span>${hits.map(m=>m.n).join(', ')}에 내 알레르기 성분(${[...new Set(hits.flatMap(hitAlg))].map(n=>ALLERGENS[n-1]).join(', ')})이 있습니다</span></div>` : '';
+
+  const max = Math.max(...day.menus.map(m => m.kg));
+  $('menuList').innerHTML = day.menus.map((m,i) => {
+    const h = hitAlg(m);
+    return `<button class="item" data-i="${i}">
+      <span class="dotg ${m.g}"></span>
+      <div class="item-main"><div class="item-name">${m.n}${h.length?'<span class="tag-al">알레르기</span>':''}</div>
+      <div class="bar"><i style="width:${Math.max(m.kg/max*100,2)}%;background:${gradeColor(m.g)}"></i></div></div>
+      <div class="item-val"><b class="num">${fmt(m.kg)}</b><small>kg</small></div>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>`;
+  }).join('');
+
+  const top = day.menus.reduce((a,b) => a.kg > b.kg ? a : b);
+  const share = Math.round(top.kg/day.kg*100);
+  $('tipBtn').dataset.i = day.menus.indexOf(top);
+  $('tipBtn').innerHTML = `<span class="ic">🍽️</span><div><b>${top.n}만 남기지 않아도</b><span>오늘 탄소의 ${share}%가 이 메뉴에서 나옵니다. 남기면 ${fmt(top.kg*0.5)}kg이 그대로 버려집니다.</span></div>`;
+}
+
+/* ---------- 메뉴 상세 시트 ---------- */
+function openMenu(i){
+  const m = byDate[cur].menus[i];
+  const h = hitAlg(m);
+  const max = Math.max(...m.ing.map(x => x[2]), 0.001);
+  sheet(`
+    <div class="sh-title"><div><h3>${m.n}</h3><p>1인분 ${fmt(m.kg)} kgCO₂e · 추정 ${Math.round(m.kcal)} kcal</p></div>${closeBtn}</div>
+    ${h.length ? `<div class="alert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><span>내 알레르기 성분: ${h.map(n=>ALLERGENS[n-1]).join(', ')}</span></div>` : ''}
+    <div class="sh-box dark">
+      <h4>남기면 버려지는 탄소</h4>
+      <div class="seg" id="wasteSeg">${[0,25,50,100].map(p=>`<button data-p="${p}" class="${p===50?'on':''}">${p===0?'다 먹음':p+'%'}</button>`).join('')}</div>
+      <div class="waste"><b class="num" id="wasteKg"></b><span>kgCO₂e</span></div>
+      <div class="waste-sub" id="wasteSub"></div>
+    </div>
+    <div class="sh-box">
+      <h4>재료별 탄소 <span>AI 추정 1인분</span></h4>
+      ${m.ing.map(x => `<div class="ing"><p>${x[0]}<small>${x[1]}g</small></p><b class="num">${fmt(x[2],3)}</b><div class="bar"><i style="width:${Math.max(x[2]/max*100,1.5)}%;background:${gradeColor(m.g)}"></i></div></div>`).join('')}
+    </div>
+    ${m.alt ? `<div class="sh-box">
+      <h4>${m.alt.foods.join('·')}를 두부로 바꾸면 <span>가상 계산</span></h4>
+      <div class="alt"><div class="from"><small>지금</small><b class="num">${fmt(m.kg)}</b></div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      <div class="to"><small>바꾸면</small><b class="num">${fmt(m.alt.kg)}</b></div></div>
+      <p class="muted" style="margin:10px 0 0">탄소가 ${Math.round(m.alt.pct)}% 줄어듭니다. 같은 무게로 바꾼 계산이라 영양과 맛은 따로 따져 봐야 합니다.</p>
+    </div>` : ''}
+    <p class="muted">탄소량은 AI가 추정한 재료에 식품별 배출계수를 곱한 값입니다. 메뉴끼리 비교하는 용도로 보세요.</p>
+  `);
+  const setWaste = p => {
+    const kg = m.kg * p / 100;
+    $('wasteKg').textContent = fmt(kg);
+    $('wasteSub').textContent = p === 0 ? '다 먹으면 버려지는 탄소가 없습니다.' :
+      `1학년 ${GRADE1}명이 똑같이 남기면 ${Math.round(kg*GRADE1)}kg, 승용차로 약 ${Math.round(kg*GRADE1*KM_PER_KG).toLocaleString()}km 거리입니다.`;
+    document.querySelectorAll('#wasteSeg button').forEach(b => b.classList.toggle('on', +b.dataset.p === p));
+  };
+  $('wasteSeg').onclick = e => { const b = e.target.closest('button'); if (b) setWaste(+b.dataset.p); };
+  setWaste(50);
+}
+
+/* ---------- 알레르기 시트 ---------- */
+function openAllergy(){
+  let sel = [...myAlg];
+  const draw = () => `
+    <div class="sh-title"><div><h3>내 알레르기</h3><p>고른 성분이 든 메뉴에 표시합니다. 이 기기에만 저장됩니다.</p></div>${closeBtn}</div>
+    <div class="sh-box"><div class="alg-grid">${ALLERGENS.map((a,i)=>`<button class="alg ${sel.includes(i+1)?'on':''}" data-n="${i+1}">${a}</button>`).join('')}</div></div>
+    <button class="cta" id="algSave">저장</button>
+    <p class="muted">나이스 급식 정보의 알레르기 번호(1~19)를 기준으로 합니다. 정확한 내용은 학교 공지를 확인하세요.</p>`;
+  sheet(draw());
+  $('sheet').onclick = e => {
+    const b = e.target.closest('.alg');
+    if (b) { const n = +b.dataset.n; sel = sel.includes(n) ? sel.filter(x=>x!==n) : [...sel, n]; b.classList.toggle('on'); return; }
+    if (e.target.closest('#algSave')) { myAlg = sel; store.set(sel); updateDot(); closeSheet(); renderToday(); renderWeek(); return; }
+    if (e.target.closest('.close')) closeSheet();
+  };
+}
+function updateDot(){ $('algDot').hidden = !myAlg.length; }
+
+const closeBtn = `<button class="close" aria-label="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>`;
+function sheet(html){
+  const s = $('sheet');
+  s.innerHTML = '<div class="grab"></div>' + html;
+  s.scrollTop = 0;
+  s.onclick = e => { if (e.target.closest('.close')) closeSheet(); };
+  s.classList.add('on'); $('scrim').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function closeSheet(){ $('sheet').classList.remove('on'); $('scrim').classList.remove('on'); document.body.style.overflow = ''; }
+$('scrim').onclick = closeSheet;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+/* ---------- 이번 주 ---------- */
+function renderWeek(){
+  const mon = parse(weeks[weekIdx]);
+  const wk = weekDates(mon);
+  const have = wk.map(s => byDate[s]).filter(Boolean);
+  const fri = parse(wk[4]);
+  $('wTitle').textContent = `${mon.getMonth()+1}월 ${mon.getDate()}일 ~ ${fri.getMonth()+1}월 ${fri.getDate()}일`;
+  const avg = have.reduce((a,d)=>a+d.kg,0) / (have.length||1);
+  $('wSub').textContent = have.length ? `급식 ${have.length}일 · 한 끼 1인 기준` : '급식 정보 없음';
+  $('wPrev').disabled = weekIdx <= 0; $('wNext').disabled = weekIdx >= weeks.length-1;
+  const max = Math.max(6.5, ...have.map(d => d.kg));
+  const low = have.length > 1 ? have.reduce((a,b)=>a.kg<b.kg?a:b).d : null;
+  const diff = (avg - DATA.summary.avg) / DATA.summary.avg * 100;
+  $('wSum').innerHTML = have.length ? `
+    <div><small>이번 주 평균</small><b class="num">${fmt(avg)}<em>kg</em></b></div>
+    <div><small>학교 평균 대비</small><b class="num ${diff>0?'up':'down'}">${diff>0?'+':''}${Math.round(diff)}%</b></div>
+    <div><small>고탄소인 날</small><b class="num">${have.filter(d=>d.g==='고').length}<em>/ ${have.length}일</em></b></div>` : '';
+  $('wBars').innerHTML = wk.map(s => { const d = byDate[s];
+    return d ? `<div class="wbar ${s===low?'low':''}"><span class="num">${fmt(d.kg,1)}</span><i style="height:${d.kg/max*100}%;background:${gradeColor(d.g)}"></i></div>` : `<div class="wbar none"><span>&nbsp;</span><i style="height:4px"></i></div>`; }).join('');
+  const plotH = 140, labelH = 0;
+  $('wAvg').style.bottom = (DATA.summary.avg/max*(plotH-labelH)) + 'px';
+  $('wNote').textContent = `학교 평균 ${fmt(DATA.summary.avg,2)}kg`;
+  $('wLabels').innerHTML = wk.map(s => `<span>${WD[parse(s).getDay()]}<b>${parse(s).getDate()}</b></span>`).join('');
+  $('wList').innerHTML = have.map(d => {
+    const dt = parse(d.d);
+    const sorted = [...d.menus].sort((a,b)=>b.kg-a.kg);
+    const main = sorted[0];
+    const rest = d.menus.filter(m => m !== main).map(m => m.n).join(', ');
+    const hi = d.menus.filter(m => m.g === '고');
+    const alg = d.menus.some(m => hitAlg(m).length);
+    const tags = [
+      d.d===low ? '<i class="best">이번 주 최저</i>' : '',
+      hi.length ? `<i class="hi">고탄소 ${hi.length}개</i>` : '<i>고탄소 메뉴 없음</i>',
+      alg ? '<i class="al">알레르기</i>' : ''].join('');
+    return `<button class="wcard ${d.g}" data-d="${d.d}">
+      <div class="wd"><small>${WD[dt.getDay()]}</small><b>${dt.getDate()}</b></div>
+      <div class="wm"><p>${main.n}</p><p class="sub">${rest}</p><div class="wtags">${tags}</div></div>
+      <div class="wv"><b class="num" style="color:${gradeColor(d.g)}">${fmt(d.kg)}</b><small>kg</small></div></button>`;
+  }).join('');
+}
+
+/* ---------- 분석 ---------- */
+function renderInsight(){
+  const S = DATA.summary;
+  $('iTitle').textContent = `${days.length}일 급식 분석`;
+  $('iPeriod').textContent = `${DATA.period.start.replaceAll('-','.')} ~ ${DATA.period.end.slice(5).replace('-','.')}`;
+  const hi = days.reduce((a,b)=>a.kg>b.kg?a:b), lo = days.reduce((a,b)=>a.kg<b.kg?a:b);
+  const md = s => { const d = parse(s); return `${d.getMonth()+1}/${d.getDate()}`; };
+  $('iCards').innerHTML = `
+    <div class="mini dark"><small>한 끼 평균</small><b class="num">${fmt(S.avg)}<em>kg</em></b><span>${days.length}일 · 1인 기준</span></div>
+    <div class="mini"><small>AI 열량 오차</small><b class="num">${fmt(S.err,1)}<em>%</em></b><span>나이스 공식 열량과 비교</span></div>
+    <div class="mini"><small>가장 높은 날</small><b class="num" style="color:var(--high)">${fmt(hi.kg)}<em>kg</em></b><span>${md(hi.d)} · ${hi.menus.reduce((a,b)=>a.kg>b.kg?a:b).n}</span></div>
+    <div class="mini"><small>가장 낮은 날</small><b class="num" style="color:var(--low)">${fmt(lo.kg)}<em>kg</em></b><span>${md(lo.d)}</span></div>`;
+
+  // 월별 평균
+  const months = {};
+  days.forEach(d => { const k = d.d.slice(0,7); (months[k] ||= []).push(d); });
+  const rows = Object.entries(months).map(([k, list]) => ({
+    m: +k.slice(5), avg: list.reduce((a,d)=>a+d.kg,0)/list.length, n: list.length, high: list.filter(d=>d.g==='고').length }));
+  const full = rows.filter(r => r.n >= 10);
+  const peak = full.reduce((a,b)=>a.avg>b.avg?a:b), best = full.reduce((a,b)=>a.avg<b.avg?a:b);
+  const scale = Math.max(...rows.map(r=>r.avg)) * 1.08;
+  $('trend').innerHTML = `<p class="headline">탄소가 가장 많았던 달은 <b>${peak.m}월</b>(한 끼 ${fmt(peak.avg)}kg), 가장 적었던 달은 <b>${best.m}월</b>(${fmt(best.avg)}kg)입니다.</p>
+    ${rows.map(r => `<div class="mrow ${r===peak?'peak':''} ${r.n<10?'few':''}"><em>${r.m}월</em>
+      <div class="track"><i style="width:${r.avg/scale*100}%;background:${gradeColor(r.avg<1.5?'저':r.avg<3?'중':'고')}"></i><u style="left:${S.avg/scale*100}%"></u></div>
+      <b class="num">${fmt(r.avg,1)}</b></div>`).join('')}
+    <div class="legend"><span><i style="background:var(--mid)"></i>한 끼 평균 3kg 미만</span><span><i style="background:var(--high)"></i>3kg 이상</span><span><u></u>올해 평균 ${fmt(S.avg)}kg</span></div>
+    <div class="note">흐리게 표시한 달은 방학이라 급식이 10일 미만입니다(${rows.filter(r=>r.n<10).map(r=>`${r.m}월 ${r.n}일`).join(', ')}). 가장 많은 달·적은 달 비교에서는 뺐습니다.</div>`;
+
+  const tmax = S.top[0].kg;
+  $('top10').innerHTML = S.top.map((t,i)=>`<div class="rank"><em>${i+1}</em><div><p>${t.n}</p><div class="bar"><i style="width:${t.kg/tmax*100}%;background:var(--high)"></i></div></div><b class="num">${fmt(t.kg)}</b></div>`).join('');
+
+  $('verify').innerHTML = `<h3>AI는 한식 메뉴를 얼마나 정확히 읽을까</h3>
+    <p class="d">Claude가 추정한 재료로 열량을 다시 계산해 나이스 공식 열량과 비교했습니다.</p>
+    <div class="cards2"><div class="mini" style="box-shadow:inset 0 0 0 1px var(--line)"><small>AI 추정 평균</small><b class="num">${Math.round(S.kcalE).toLocaleString()}<em>kcal</em></b></div>
+    <div class="mini" style="box-shadow:inset 0 0 0 1px var(--line)"><small>공식 평균</small><b class="num">${Math.round(S.kcalO).toLocaleString()}<em>kcal</em></b></div></div>
+    <div class="note">하루 단위 오차율 평균은 ${fmt(S.err,1)}%입니다. 열량이 맞아도 재료 종류(예: 소고기와 돼지고기)는 틀릴 수 있어, 이 검증은 양을 맞혔는지를 주로 봅니다.</div>`;
+
+  $('method').innerHTML = `<ul>
+    <li>나이스 급식 공공데이터에서 효명고 중식 ${days.length}일(${DATA.period.start.replaceAll('-','.')}~${DATA.period.end.slice(5).replace('-','.')}) 메뉴, 열량, 영양, 알레르기 정보를 받았습니다.</li>
+    <li>Claude(Anthropic)가 메뉴 이름만 보고 1인분 재료와 양(g)을 추정했습니다. 이때 공식 열량은 보여주지 않았습니다.</li>
+    <li>재료마다 배출계수(kgCO₂e/kg)를 곱해 더했습니다. 국내 육류는 기후솔루션, 나머지는 Poore &amp; Nemecek(2018) 값을 썼습니다.</li>
+    <li>국내외 계수를 섞었기 때문에 절댓값보다 메뉴끼리의 비교에 의미가 있습니다.</li>
+    <li>승용차 거리는 1km당 0.2kgCO₂e로 잡은 대략값입니다.</li></ul>`;
+  $('sources').innerHTML = '<ul>' + DATA.sources.map(s=>`<li>${s}</li>`).join('') + '</ul>';
+}
+
+/* ---------- 이벤트 ---------- */
+function show(v){
+  document.querySelectorAll('.view').forEach(x => x.classList.toggle('on', x.id === 'v-'+v));
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x.dataset.v === v));
+  window.scrollTo(0,0);
+}
+document.querySelector('.tabs').onclick = e => { const b = e.target.closest('.tab'); if (b) show(b.dataset.v); };
+$('dayChips').onclick = e => { const b = e.target.closest('.dchip'); if (b) { cur = b.dataset.d; renderToday(); } };
+const jumpWeek = dir => { const wi = weeks.indexOf(iso(monday(cur))) + dir; if (wi<0||wi>=weeks.length) return;
+  cur = weekDates(parse(weeks[wi])).find(s => byDate[s]); weekIdx = wi; renderToday(); renderWeek(); };
+$('prevW').onclick = () => jumpWeek(-1); $('nextW').onclick = () => jumpWeek(1);
+$('wPrev').onclick = () => { if (weekIdx>0) { weekIdx--; renderWeek(); } };
+$('wNext').onclick = () => { if (weekIdx<weeks.length-1) { weekIdx++; renderWeek(); } };
+$('wList').onclick = e => { const b = e.target.closest('.wcard'); if (b) { cur = b.dataset.d; renderToday(); show('today'); } };
+$('menuList').onclick = e => { const b = e.target.closest('.item'); if (b) openMenu(+b.dataset.i); };
+$('tipBtn').onclick = () => openMenu(+$('tipBtn').dataset.i);
+$('openAlg').onclick = openAllergy;
+
+updateDot(); renderToday(); renderWeek(); renderInsight();
+</script>
+</body>
+</html>
