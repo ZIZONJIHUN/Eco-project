@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { diffDays } from '@/lib/date'
 import { mean } from '@/lib/stats'
 import type { Dataset, Day } from '@/lib/types'
+import type { DayLog, MealLog } from '@/lib/meal-log'
 import { useStoredState, useToday } from '@/lib/client/hooks'
 
 export type ThemePref = 'system' | 'light' | 'dark'
@@ -28,6 +29,12 @@ interface AppState {
   menu: { name: string; day: string | null } | null
   openMenu: (name: string, day?: string | null) => void
   closeMenu: () => void
+  /** 먹은 양 기록 (이 기기에만 저장) */
+  log: MealLog
+  saveLog: (day: string, entry: DayLog | null) => void
+  logDay: string | null
+  openLog: (day: string) => void
+  closeLog: () => void
   refresh: () => Promise<RefreshResult>
   refreshing: boolean
 }
@@ -55,6 +62,8 @@ export function AppProvider({ initial, children }: { initial: Dataset; children:
   const [refreshing, setRefreshing] = useState(false)
   const [pickedDay, setPickedDay] = useState<string | null>(null)
   const [menu, setMenu] = useState<AppState['menu']>(null)
+  const [logDay, setLogDay] = useState<string | null>(null)
+  const [log, setLogState] = useStoredState<MealLog>('hm-log', {})
   const [allergies, setAllergies] = useStoredState<number[]>('hm-allergy', [])
   const [theme, setTheme] = useStoredState<ThemePref>('hm-theme', 'system')
   const today = useToday(initial.generatedDay)
@@ -117,6 +126,17 @@ export function AppProvider({ initial, children }: { initial: Dataset; children:
 
   const openMenu = useCallback((name: string, d: string | null = null) => setMenu({ name, day: d }), [])
   const closeMenu = useCallback(() => setMenu(null), [])
+  const openLog = useCallback((d: string) => setLogDay(d), [])
+  const closeLog = useCallback(() => setLogDay(null), [])
+  const saveLog = useCallback(
+    (d: string, entry: DayLog | null) => {
+      const next = { ...log }
+      if (entry) next[d] = entry
+      else delete next[d]
+      setLogState(next)
+    },
+    [log, setLogState],
+  )
 
   const value = useMemo<AppState>(
     () => ({
@@ -135,10 +155,15 @@ export function AppProvider({ initial, children }: { initial: Dataset; children:
       menu,
       openMenu,
       closeMenu,
+      log,
+      saveLog,
+      logDay,
+      openLog,
+      closeLog,
       refresh,
       refreshing,
     }),
-    [data, byDay, mealDays, avg, today, day, pickedDay, allergies, setAllergies, theme, setTheme, menu, openMenu, closeMenu, refresh, refreshing],
+    [data, byDay, mealDays, avg, today, day, pickedDay, allergies, setAllergies, theme, setTheme, menu, openMenu, closeMenu, log, saveLog, logDay, openLog, closeLog, refresh, refreshing],
   )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

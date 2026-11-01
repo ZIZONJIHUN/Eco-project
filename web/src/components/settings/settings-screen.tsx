@@ -6,20 +6,26 @@ import { ALLERGENS } from '@/lib/allergens'
 import { formatMedium } from '@/lib/date'
 import { useMounted, useOnline } from '@/lib/client/hooks'
 import { useApp, type ThemePref } from '../app-provider'
+import { AllergyPicker } from '../allergy-picker'
 import { InstallPanel } from '../install/install-panel'
-import { IconCheck, IconDevice, IconMoon, IconRefresh, IconSun } from '../ui/icons'
+import { IconDevice, IconMoon, IconRefresh, IconSun } from '../ui/icons'
+import { Tooltip } from '../ui/tooltip'
+import { Fluent } from '../ui/visual'
 import { Segmented } from '../ui/segmented'
 import { useToast } from '../ui/toast'
 
-function Section({ id, title, desc, children, action }: { id: string; title: string; desc?: ReactNode; children: ReactNode; action?: ReactNode }) {
+function Section({ id, title, desc, children, action, icon }: { id: string; title: string; desc?: ReactNode; children: ReactNode; action?: ReactNode; icon?: string }) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-6 rounded-card bg-surface p-5 shadow-[0_0_0_1px_var(--line)] md:p-6">
+    <section id={id} aria-labelledby={`${id}-title`} className="mb-5 scroll-mt-6 break-inside-avoid rounded-card bg-surface p-5 shadow-card md:p-6">
       <div className="mb-4 flex items-start justify-between gap-3">
-        <div>
+        <div className="flex items-start gap-3">
+          {icon && <Fluent name={icon} size={36} className="mt-0.5" />}
+          <div>
           <h2 id={`${id}-title`} className="text-title font-bold tight">
             {title}
           </h2>
           {desc && <p className="mt-1 text-cap text-ink-2">{desc}</p>}
+          </div>
         </div>
         {action}
       </div>
@@ -79,10 +85,12 @@ export function SettingsScreen() {
         <p className="mt-1 text-cap text-ink-2">설정은 이 기기에만 저장돼요. 로그인은 필요 없어요.</p>
       </header>
 
-      <div className="grid gap-5 lg:grid-cols-2 lg:items-start">
-        <div className="flex flex-col gap-5">
+      {/* 화면이 넓어질수록 단이 늘어나고, 카드 높이가 달라도 빈칸이 생기지 않는다 */}
+      <div className="columns-1 gap-5 lg:columns-2 3xl:columns-3">
+        <div className="contents">
           <Section
             id="allergy"
+            icon="warning"
             title="내 알레르기"
             desc="고른 성분이 든 메뉴에 표시하고, 오늘 화면에서 알려 드려요. 누르면 바로 저장돼요."
             action={
@@ -101,45 +109,26 @@ export function SettingsScreen() {
               ) : null
             }
           >
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-              {ALLERGENS.map((a, i) => {
-                const n = i + 1
-                const on = mounted && allergies.includes(n)
-                return (
-                  <button
-                    key={a}
-                    type="button"
-                    aria-pressed={on}
-                    onClick={() => toggle(n)}
-                    className={`press flex min-h-12 items-center justify-center gap-1 rounded-btn px-2 text-cap font-semibold transition-colors ${
-                      on ? 'bg-alert text-white dark:text-[#1a0f0e]' : 'bg-surface-2 text-ink-2 shadow-[inset_0_0_0_1px_var(--line)] hover:text-ink'
-                    }`}
-                  >
-                    {on && <IconCheck size={15} strokeWidth={2.6} />}
-                    {a}
-                  </button>
-                )
-              })}
-            </div>
+            <AllergyPicker value={mounted ? allergies : []} onToggle={toggle} />
             <p className="mt-3 text-[12px] text-ink-3">나이스 급식의 알레르기 번호(1~19)를 기준으로 해요. 정확한 내용은 학교 공지를 확인해 주세요.</p>
           </Section>
 
-          <Section id="theme" title="화면">
+          <Section id="theme" icon="desktop-computer" title="화면" desc="글자와 바탕의 밝기를 골라요">
             <Segmented<ThemePref>
               label="화면 테마"
               value={mounted ? theme : 'system'}
               onChange={setTheme}
               options={[
-                { value: 'system', label: '기기 설정', icon: <IconDevice size={16} /> },
-                { value: 'light', label: '밝게', icon: <IconSun size={16} /> },
-                { value: 'dark', label: '어둡게', icon: <IconMoon size={16} /> },
+                { value: 'system', label: '기기 설정', icon: <IconDevice size={16} />, activeBg: 'bg-[#e4ebff] dark:bg-[#26304d]', activeText: 'text-[#3451b2] dark:text-[#a9bcff]' },
+                { value: 'light', label: '밝게', icon: <IconSun size={16} />, activeBg: 'bg-[#fff1cc] dark:bg-[#4a3a12]', activeText: 'text-[#9a5f00] dark:text-[#ffd76a]' },
+                { value: 'dark', label: '어둡게', icon: <IconMoon size={16} />, activeBg: 'bg-[#2a2f45] dark:bg-[#33395a]', activeText: 'text-[#d6dcff] dark:text-[#d6dcff]' },
               ]}
             />
           </Section>
         </div>
 
-        <div className="flex flex-col gap-5">
-          <Section id="install" title="앱 설치" desc="홈 화면에 추가하면 앱처럼 열리고, 인터넷이 없어도 마지막 식단이 보여요.">
+        <div className="contents">
+          <Section id="install" icon="mobile-phone" title="앱 설치" desc="홈 화면에 추가하면 앱처럼 열리고, 인터넷이 없어도 마지막 식단이 보여요.">
             <InstallPanel showQr="always" />
             <Link href="/install" className="press mt-4 inline-flex min-h-10 items-center text-cap font-semibold text-brand underline-offset-2 hover:underline">
               발표용 큰 QR 화면 열기
@@ -148,6 +137,7 @@ export function SettingsScreen() {
 
           <Section
             id="data"
+            icon="bar-chart"
             title="데이터"
             action={
               <button
@@ -189,9 +179,9 @@ export function SettingsScreen() {
             <p className="mt-4 text-[12px] text-ink-3">식단은 6시간마다 나이스에서 새로 받아요. 나이스에 올라오지 않은 달은 비어 있어요.</p>
           </Section>
 
-          <Section id="about" title="정보">
+          <Section id="about" icon="school" title="정보">
             <p className="text-cap text-ink-2">
-              효명고 1학년 환경 + 진로 탐구 프로젝트로 만들었어요. 급식 정보는 나이스 교육정보 개방 포털에서 받아요.
+              <b className="font-semibold text-ink">효명고 1학년 임지훈</b>이 환경 + 진로 탐구 프로젝트로 만들었어요. 급식 정보는 나이스 교육정보 개방 포털에서 받아요.
             </p>
             <Link href="/insights#method" className="press mt-3 inline-flex min-h-10 items-center text-cap font-semibold text-brand underline-offset-2 hover:underline">
               탄소를 어떻게 계산하는지 보기

@@ -138,7 +138,7 @@ export function InstallPanel({ showQr = 'auto' }: { showQr?: 'auto' | 'always' |
       )}
       <div className="flex min-w-0 flex-col gap-4">
         {installed ? (
-          <p className="flex items-center gap-2 text-body font-semibold text-low">
+          <p className="flex items-center gap-2 text-body font-semibold text-t1">
             <IconCheck size={20} strokeWidth={2.4} />
             {env.standalone ? '지금 앱으로 열려 있어요' : '이 기기에 설치했어요'}
           </p>
@@ -153,7 +153,7 @@ export function InstallPanel({ showQr = 'auto' }: { showQr?: 'auto' | 'always' |
             aria-label={copied ? '복사했어요' : '주소 복사'}
             className="press flex min-h-10 shrink-0 items-center gap-1.5 rounded-[10px] bg-surface px-3 text-cap font-semibold shadow-[0_0_0_1px_var(--line)]"
           >
-            {copied ? <IconCheck size={16} className="text-low" strokeWidth={2.4} /> : <IconCopy size={16} />}
+            {copied ? <IconCheck size={16} className="text-t1" strokeWidth={2.4} /> : <IconCopy size={16} />}
             {copied ? '복사함' : '복사'}
           </button>
           <span className="sr-only" aria-live="polite">

@@ -4,16 +4,29 @@ import './globals.css'
 import { ToastProvider } from '@/components/ui/toast'
 import { ServiceWorker } from '@/components/service-worker'
 
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://hyomyung-meal-carbon.vercel.app'
+const DESCRIPTION = '효명고 점심 급식 한 끼의 탄소 발자국을 날마다 보여 주는 앱. 메뉴별 탄소, 남기면 버려지는 양, 알레르기, 먹은 양 기록과 순위까지.'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE),
   title: { default: '효명 급식 탄소', template: '%s · 효명 급식 탄소' },
-  description: '효명고 점심 급식 한 끼의 탄소 발자국을 날마다 보여 주는 앱. 메뉴별 재료와 남겼을 때 버려지는 탄소, 알레르기까지 한눈에.',
+  description: DESCRIPTION,
   applicationName: '효명 급식 탄소',
   appleWebApp: { capable: true, title: '급식탄소', statusBarStyle: 'default' },
   formatDetection: { telephone: false },
   icons: {
-    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
-    apple: [{ url: '/pwa-icons/apple-touch-icon.png', sizes: '180x180' }],
+    icon: [{ url: '/icons/favicon-64.png', sizes: '64x64', type: 'image/png' }],
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }],
   },
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    siteName: '효명 급식 탄소',
+    title: '오늘 점심 한 끼, 탄소는 얼마일까? · 효명 급식 탄소',
+    description: DESCRIPTION,
+    images: [{ url: '/og.jpg', width: 1200, height: 630, alt: '효명 급식 탄소: 급식판 그림과 함께 오늘 점심 한 끼의 탄소를 묻는 제목' }],
+  },
+  twitter: { card: 'summary_large_image', title: '효명 급식 탄소', description: DESCRIPTION, images: ['/og.jpg'] },
 }
 
 export const viewport: Viewport = {

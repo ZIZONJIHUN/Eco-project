@@ -6,7 +6,9 @@
 /* ── 색 토큰 ───────────────────────────────────────────────
    표면은 높이 순서: bg < surface < raised(시트·떠 있는 탭)
    글자색 3단계: ink(주) · ink-2(보조) · ink-3(흐림, 흰 바탕 4.5:1 이상)
-   등급색은 늘 글자(낮음·보통·높음)와 함께 쓴다 */
+   탄소량 색 5단계 t1~t5: 매우 낮음(초록) → 낮음(연두) → 보통(호박) → 높음(주황) → 매우 높음(빨강)
+   - 글자색은 흰 바탕에서 4.5:1 이상, -bar 는 막대·점, -soft 는 칸 바탕
+   등급 low·mid·high 는 t1·t3·t4 와 같다. 색만으로 뜻을 전하지 않도록 글자·화살표를 함께 쓴다 */
 :root {
   color-scheme: light;
   --bg: #f3f4f1;
@@ -23,20 +25,32 @@
   --brand-ink: #ffffff;
   --brand-soft: #e3efe8;
   --lime: #c9ee7a;
-  --low: #19784f;
-  --low-soft: #e2f2e9;
-  --low-bar: #2f9a6c;
-  --mid: #8f5b0c;
-  --mid-soft: #f8edd9;
-  --mid-bar: #d79a2b;
-  --high: #b9461a;
-  --high-soft: #fbe6dc;
-  --high-bar: #e2632b;
+
+  --t1: #0f7a4c;
+  --t1-soft: #dff3e8;
+  --t1-bar: #22a066;
+  --t2: #4a8312;
+  --t2-soft: #edf5dc;
+  --t2-bar: #8cc43c;
+  --t3: #9a5f00;
+  --t3-soft: #fbefd6;
+  --t3-bar: #e2a33a;
+  --t4: #bf4b14;
+  --t4-soft: #fde5d6;
+  --t4-bar: #ee7a3c;
+  --t5: #c0262c;
+  --t5-soft: #fcdedd;
+  --t5-bar: #e04848;
+
   --alert: #c0302a;
   --alert-soft: #fce7e5;
   --scrim: rgb(10 16 13 / 0.42);
+  --shadow-card: 0 1px 2px rgb(20 30 25 / 0.04), 0 0 0 1px rgb(20 30 25 / 0.06);
+  --shadow-lift: 0 1px 3px rgb(20 30 25 / 0.08), 0 14px 32px -12px rgb(20 30 25 / 0.22), 0 0 0 1px rgb(20 30 25 / 0.05);
   --shadow-float: 0 10px 30px rgb(20 30 25 / 0.12), 0 1px 3px rgb(20 30 25 / 0.08);
   --shadow-sheet: 0 -8px 40px rgb(20 30 25 / 0.14);
+  --scroll-thumb: rgb(23 33 27 / 0.22);
+  --scroll-thumb-hover: rgb(23 33 27 / 0.38);
 }
 
 [data-theme="dark"] {
@@ -55,23 +69,37 @@
   --brand-ink: #0b1510;
   --brand-soft: rgb(108 203 156 / 0.15);
   --lime: #b9e06a;
-  --low: #79d3a6;
-  --low-soft: rgb(121 211 166 / 0.14);
-  --low-bar: #5fbf8f;
-  --mid: #e8bd6a;
-  --mid-soft: rgb(232 189 106 / 0.14);
-  --mid-bar: #d9a648;
-  --high: #f39468;
-  --high-soft: rgb(243 148 104 / 0.15);
-  --high-bar: #ec7a48;
+
+  --t1: #74d6a4;
+  --t1-soft: rgb(116 214 164 / 0.14);
+  --t1-bar: #4cc08a;
+  --t2: #b4dc6a;
+  --t2-soft: rgb(180 220 106 / 0.13);
+  --t2-bar: #9fce4d;
+  --t3: #f0c463;
+  --t3-soft: rgb(240 196 99 / 0.14);
+  --t3-bar: #e0ad44;
+  --t4: #f6a06d;
+  --t4-soft: rgb(246 160 109 / 0.15);
+  --t4-bar: #ef8a52;
+  --t5: #ff8079;
+  --t5-soft: rgb(255 128 121 / 0.15);
+  --t5-bar: #f25f5a;
+
   --alert: #f48a83;
   --alert-soft: rgb(244 138 131 / 0.15);
   --scrim: rgb(0 0 0 / 0.55);
+  --shadow-card: 0 0 0 1px rgb(255 255 255 / 0.06);
+  --shadow-lift: 0 0 0 1px rgb(255 255 255 / 0.1), 0 16px 36px -12px rgb(0 0 0 / 0.6);
   --shadow-float: 0 10px 30px rgb(0 0 0 / 0.4), 0 0 0 1px rgb(255 255 255 / 0.06);
   --shadow-sheet: 0 -8px 40px rgb(0 0 0 / 0.5);
+  --scroll-thumb: rgb(255 255 255 / 0.18);
+  --scroll-thumb-hover: rgb(255 255 255 / 0.32);
 }
 
 @theme inline {
+  --breakpoint-3xl: 105rem;
+
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
@@ -86,15 +114,21 @@
   --color-brand-ink: var(--brand-ink);
   --color-brand-soft: var(--brand-soft);
   --color-lime: var(--lime);
-  --color-low: var(--low);
-  --color-low-soft: var(--low-soft);
-  --color-low-bar: var(--low-bar);
-  --color-mid: var(--mid);
-  --color-mid-soft: var(--mid-soft);
-  --color-mid-bar: var(--mid-bar);
-  --color-high: var(--high);
-  --color-high-soft: var(--high-soft);
-  --color-high-bar: var(--high-bar);
+  --color-t1: var(--t1);
+  --color-t1-soft: var(--t1-soft);
+  --color-t1-bar: var(--t1-bar);
+  --color-t2: var(--t2);
+  --color-t2-soft: var(--t2-soft);
+  --color-t2-bar: var(--t2-bar);
+  --color-t3: var(--t3);
+  --color-t3-soft: var(--t3-soft);
+  --color-t3-bar: var(--t3-bar);
+  --color-t4: var(--t4);
+  --color-t4-soft: var(--t4-soft);
+  --color-t4-bar: var(--t4-bar);
+  --color-t5: var(--t5);
+  --color-t5-soft: var(--t5-soft);
+  --color-t5-bar: var(--t5-bar);
   --color-alert: var(--alert);
   --color-alert-soft: var(--alert-soft);
 
@@ -120,11 +154,14 @@
   --radius-card: 20px;
   --radius-sheet: 28px;
 
+  --shadow-card: var(--shadow-card);
+  --shadow-lift: var(--shadow-lift);
   --shadow-float: var(--shadow-float);
   --shadow-sheet: var(--shadow-sheet);
 
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
 }
 
 @layer base {
@@ -132,6 +169,8 @@
     background: var(--bg);
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* 브라우저 기본 당겨서 새로고침 대신 앱의 것을 쓴다 */
+    overscroll-behavior-y: none;
   }
   body {
     background: var(--bg);
@@ -152,6 +191,38 @@
   ::selection {
     background: var(--brand-soft);
   }
+
+  /* 얇은 스크롤바: 화살표 없이 둥근 손잡이만. 마우스를 올리면 조금 진해진다 */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scroll-thumb);
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--scroll-thumb-hover);
+    border-width: 2px;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-button,
+  ::-webkit-scrollbar-corner {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--scroll-thumb) transparent;
+    }
+  }
 }
 
 @layer utilities {
@@ -164,7 +235,7 @@
   }
   /* 눌렀을 때 바로(100ms 안) 살짝 들어가는 반응 */
   .press {
-    transition: transform 90ms var(--ease-out), background-color 120ms, opacity 120ms;
+    transition: transform 90ms var(--ease-out), background-color 120ms, opacity 120ms, box-shadow 200ms;
   }
   .press:active {
     transform: scale(0.98);
@@ -184,6 +255,16 @@
       padding-bottom: 48px;
     }
   }
+  /* 형광펜처럼 숫자·핵심 낱말 아래쪽만 칠한다 */
+  .hl {
+    background-image: linear-gradient(transparent 58%, var(--hl, var(--brand-soft)) 58%);
+    padding: 0 0.12em;
+    border-radius: 2px;
+  }
+  /* 급식이 없는 칸: 옅은 빗금 */
+  .hatch {
+    background-image: repeating-linear-gradient(-45deg, var(--line) 0 1px, transparent 1px 7px);
+  }
 }
 
 /* 숫자가 처음 나타날 때 */
@@ -199,6 +280,130 @@
 }
 .rise {
   animation: rise 260ms var(--ease-out) both;
+}
+
+/* ── 사이드 메뉴: 진한 초록 유리판 + 커서를 따라가는 빛 ── */
+.side-panel {
+  --side-ink: rgb(255 255 255 / 0.74);
+  background:
+    radial-gradient(120% 55% at 0% 0%, rgb(201 238 122 / 0.2), transparent 62%),
+    radial-gradient(110% 50% at 100% 100%, rgb(56 189 148 / 0.22), transparent 60%),
+    linear-gradient(165deg, #175039 0%, #11392c 52%, #0b261d 100%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.08),
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    0 24px 48px -18px rgb(12 40 30 / 0.55),
+    0 2px 6px rgb(0 0 0 / 0.12);
+}
+[data-theme="dark"] .side-panel {
+  background:
+    radial-gradient(120% 55% at 0% 0%, rgb(185 224 106 / 0.14), transparent 62%),
+    radial-gradient(110% 50% at 100% 100%, rgb(56 189 148 / 0.16), transparent 60%),
+    linear-gradient(165deg, #133d2e 0%, #0e2c22 52%, #091d16 100%);
+}
+.side-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, -200px), rgb(255 255 255 / 0.1), transparent 70%);
+  opacity: 0;
+  transition: opacity 300ms;
+}
+.side-panel:hover::before {
+  opacity: 1;
+}
+.side-indicator {
+  background: linear-gradient(135deg, rgb(255 255 255 / 0.18), rgb(255 255 255 / 0.08));
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.16),
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 10px 24px -10px rgb(201 238 122 / 0.45);
+  backdrop-filter: blur(8px);
+  transition: transform 420ms var(--ease-spring);
+}
+
+/* ── 툴팁 ── */
+@keyframes tip-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--tip-from, 4px)) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.tooltip {
+  animation: tip-in 160ms var(--ease-out) both;
+}
+
+/* ── 계산 방법 흐름: 점이 단계 사이를 지나간다 ── */
+@keyframes flow-x {
+  from {
+    transform: translateX(-10%);
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(110%);
+    opacity: 0;
+  }
+}
+@keyframes flow-y {
+  from {
+    transform: translateY(-10%);
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+}
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+.bob {
+  animation: bob 3.2s ease-in-out infinite;
+}
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.grow-x {
+  transform-origin: left center;
+  animation: grow-x 700ms var(--ease-out) both;
+}
+
+/* 당겨서 새로고침: 당기는 동안 본문이 함께 내려오고, 놓으면 살짝 튕기며 돌아간다 */
+@media (pointer: coarse) {
+  .ptr-target {
+    transition: transform 450ms var(--ease-spring);
+  }
+  html.ptr-on .ptr-target {
+    transform: translateY(var(--ptr, 0px));
+  }
+  html.ptr-dragging .ptr-target {
+    transition: none;
+  }
 }
 
 /* 시트가 열려 있는 동안 뒤 화면은 스크롤되지 않는다 */
@@ -294,6 +499,7 @@ dialog.sheet.dragging > .sheet-panel {
   *::before,
   *::after {
     animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
   }
 }

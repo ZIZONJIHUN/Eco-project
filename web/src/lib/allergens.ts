@@ -23,5 +23,29 @@ export const ALLERGENS = [
 
 export const allergenName = (n: number): string => ALLERGENS[n - 1] ?? `${n}번`
 
+/** 알레르기 번호별 그림 (public/img/fluent) */
+export const ALLERGEN_ICON = [
+  'egg',
+  'glass-of-milk',
+  'sheaf-of-rice',
+  'peanuts',
+  'beans',
+  'bread',
+  'fish',
+  'crab',
+  'shrimp',
+  'pig-face',
+  'peach',
+  'tomato',
+  'test-tube',
+  'chestnut',
+  'chicken',
+  'cow-face',
+  'squid',
+  'oyster',
+  'evergreen-tree',
+] as const
+export const allergenIcon = (n: number): string => ALLERGEN_ICON[n - 1] ?? 'warning'
+
 /** 메뉴의 알레르기 번호 중 내가 고른 것 */
 export const myHits = (allergens: number[], mine: number[]): number[] => allergens.filter((n) => mine.includes(n))

@@ -1,12 +1,12 @@
 // 효명 급식 탄소 서비스 워커
 // - 화면(HTML): 네트워크 먼저, 4초 안에 안 오거나 끊기면 저장해 둔 화면
-// - 빌드 파일·글꼴·아이콘: 저장해 둔 것 먼저 (파일 이름에 해시가 있어 바뀌지 않는다)
+// - 빌드 파일·글꼴·아이콘·음식 그림: 저장해 둔 것 먼저 (파일 이름에 해시가 있어 바뀌지 않는다)
 // - /api/data: 네트워크 먼저, 끊기면 저장해 둔 데이터
 // - 클라이언트 이동용 RSC 요청은 건드리지 않는다. 실패하면 Next.js 가 일반 이동으로 바꾸고, 그때 저장된 화면을 준다.
-const VERSION = 'v1'
+const VERSION = 'v3'
 const PAGES = `hm-pages-${VERSION}`
 const ASSETS = `hm-assets-${VERSION}`
-const PRECACHE = ['/', '/meals', '/insights', '/settings', '/install', '/manifest.webmanifest', '/icon.svg', '/pwa-icons/icon-192.png']
+const PRECACHE = ['/', '/meals', '/records', '/insights', '/settings', '/install', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/favicon-64.png']
 const NETWORK_TIMEOUT = 4000
 
 self.addEventListener('install', (event) => {
@@ -76,7 +76,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(networkFirst(event, PAGES, pageKey(url)))
     return
   }
-  if (url.pathname.startsWith('/_next/static/') || url.pathname.startsWith('/pwa-icons/') || url.pathname === '/icon.svg') {
+  if (url.pathname.startsWith('/_next/static/') || url.pathname.startsWith('/img/') || url.pathname.startsWith('/icons/')) {
     event.respondWith(cacheFirst(event))
   }
 })

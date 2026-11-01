@@ -17,13 +17,14 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#1c6b4f',
     categories: ['education', 'food', 'lifestyle'],
     icons: [
-      { src: '/pwa-icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-      { src: '/pwa-icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: '/pwa-icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+      { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: '/icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
     ],
     shortcuts: [
-      { name: '이번 주 식단', short_name: '식단', url: '/meals', icons: [{ src: '/pwa-icons/icon-192.png', sizes: '192x192' }] },
-      { name: '분석', url: '/insights', icons: [{ src: '/pwa-icons/icon-192.png', sizes: '192x192' }] },
+      { name: '이번 주 식단', short_name: '식단', url: '/meals', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
+      { name: '내 기록', url: '/records', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
+      { name: '분석', url: '/insights', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
     ],
   }
 }

@@ -6,6 +6,10 @@ export interface SegmentOption<T extends string> {
   value: T
   label: ReactNode
   icon?: ReactNode
+  /** 골랐을 때 글자색 (예: text-t1) */
+  activeText?: string
+  /** 골랐을 때 미끄러지는 바탕색 (예: bg-t1-soft) */
+  activeBg?: string
 }
 
 /** 선택지 2~5개를 고르는 막대. 선택 표시가 미끄러지고, 좌우 화살표로 옮길 수 있다 */
@@ -50,7 +54,9 @@ export function Segmented<T extends string>({
     >
       <span
         aria-hidden="true"
-        className="absolute top-1 bottom-1 left-1 rounded-[9px] bg-surface shadow-[0_1px_2px_rgb(0_0_0/0.08),0_1px_6px_rgb(0_0_0/0.05)] transition-transform duration-250 ease-out dark:bg-surface-2"
+        className={`absolute top-1 bottom-1 left-1 rounded-[9px] shadow-[0_1px_2px_rgb(0_0_0/0.08),0_1px_6px_rgb(0_0_0/0.05)] transition-[transform,background-color] duration-250 ease-out ${
+          options[index]?.activeBg ?? 'bg-surface dark:bg-surface-2'
+        }`}
         style={{ width: `calc((100% - 8px) / ${options.length})`, transform: `translateX(${index * 100}%)` }}
       />
       {options.map((o, i) => {
@@ -67,7 +73,7 @@ export function Segmented<T extends string>({
             tabIndex={on ? 0 : -1}
             onClick={() => onChange(o.value)}
             className={`relative z-[1] flex min-h-10 items-center justify-center gap-1.5 rounded-[9px] px-2 text-cap font-semibold transition-colors duration-150 ${
-              on ? 'text-ink' : 'text-ink-2 hover:text-ink'
+              on ? (o.activeText ?? 'text-ink') : 'text-ink-2 hover:text-ink'
             }`}
           >
             {o.icon}

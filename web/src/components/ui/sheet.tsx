@@ -15,6 +15,7 @@ export function Sheet({
   subtitle,
   children,
   wide = false,
+  leading,
 }: {
   open: boolean
   onClose: () => void
@@ -22,6 +23,8 @@ export function Sheet({
   subtitle?: ReactNode
   children: ReactNode
   wide?: boolean
+  /** 제목 왼쪽에 둘 그림 */
+  leading?: ReactNode
 }) {
   const ref = useRef<HTMLDialogElement>(null)
   const panel = useRef<HTMLDivElement>(null)
@@ -34,6 +37,8 @@ export function Sheet({
       d.classList.remove('closing')
       d.showModal()
       panel.current?.scrollTo({ top: 0 })
+      // 처음 포커스는 시트 자체에 둔다 (닫기 버튼에 링이 먼저 생기지 않게). Tab 을 누르면 닫기 버튼부터 간다
+      panel.current?.focus({ preventScroll: true })
     } else if (!open && d.open) {
       d.classList.add('closing')
       const t = window.setTimeout(() => {
@@ -82,7 +87,8 @@ export function Sheet({
     >
       <div
         ref={panel}
-        className={`sheet-panel relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-sheet bg-surface shadow-sheet md:max-h-[86dvh] md:rounded-sheet md:shadow-float ${
+        tabIndex={-1}
+        className={`sheet-panel relative flex outline-none max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-sheet bg-surface shadow-sheet md:max-h-[86dvh] md:rounded-sheet md:shadow-float ${
           wide ? 'md:w-[min(720px,100%)]' : 'md:w-[min(560px,100%)]'
         }`}
       >
@@ -97,7 +103,8 @@ export function Sheet({
           <span className="h-1.5 w-10 rounded-full bg-line-strong" />
         </div>
         <header className="flex shrink-0 items-start justify-between gap-4 px-5 pt-2 pb-3 md:px-7 md:pt-6">
-          <div className="min-w-0">
+          {leading}
+          <div className="min-w-0 flex-1">
             <h2 id="sheet-title" className="text-h2 font-bold tight text-balance">
               {title}
             </h2>

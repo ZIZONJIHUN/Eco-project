@@ -206,3 +206,10 @@ export const IconMore = (p: P) => (
     <circle cx="18.5" cy="12" r="1.2" fill="currentColor" />
   </Base>
 )
+export const IconTrophy = (p: P) => (
+  <Base {...p}>
+    <path d="M8 4h8v5a4 4 0 0 1-8 0V4Z" />
+    <path d="M8 6H5.5a2 2 0 0 0 0 4H8M16 6h2.5a2 2 0 0 1 0 4H16" />
+    <path d="M12 13v3.5M8.5 20h7M9.5 20c0-2 1-3.5 2.5-3.5s2.5 1.5 2.5 3.5" />
+  </Base>
+)
