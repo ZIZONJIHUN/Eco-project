@@ -1,0 +1,299 @@
+@import "tailwindcss";
+
+/* 다크 모드는 <html data-theme="dark"> 로 켠다 (설정에서 고르거나 시스템을 따른다) */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ── 색 토큰 ───────────────────────────────────────────────
+   표면은 높이 순서: bg < surface < raised(시트·떠 있는 탭)
+   글자색 3단계: ink(주) · ink-2(보조) · ink-3(흐림, 흰 바탕 4.5:1 이상)
+   등급색은 늘 글자(낮음·보통·높음)와 함께 쓴다 */
+:root {
+  color-scheme: light;
+  --bg: #f3f4f1;
+  --surface: #ffffff;
+  --surface-2: #f6f7f4;
+  --surface-3: #eceee9;
+  --raised: rgb(255 255 255 / 0.86);
+  --line: rgb(23 33 27 / 0.08);
+  --line-strong: rgb(23 33 27 / 0.15);
+  --ink: #161b18;
+  --ink-2: #4c544f;
+  --ink-3: #6b726d;
+  --brand: #1c6b4f;
+  --brand-ink: #ffffff;
+  --brand-soft: #e3efe8;
+  --lime: #c9ee7a;
+  --low: #19784f;
+  --low-soft: #e2f2e9;
+  --low-bar: #2f9a6c;
+  --mid: #8f5b0c;
+  --mid-soft: #f8edd9;
+  --mid-bar: #d79a2b;
+  --high: #b9461a;
+  --high-soft: #fbe6dc;
+  --high-bar: #e2632b;
+  --alert: #c0302a;
+  --alert-soft: #fce7e5;
+  --scrim: rgb(10 16 13 / 0.42);
+  --shadow-float: 0 10px 30px rgb(20 30 25 / 0.12), 0 1px 3px rgb(20 30 25 / 0.08);
+  --shadow-sheet: 0 -8px 40px rgb(20 30 25 / 0.14);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d110f;
+  --surface: #151a17;
+  --surface-2: #1b211d;
+  --surface-3: #242b26;
+  --raised: rgb(32 39 35 / 0.88);
+  --line: rgb(255 255 255 / 0.08);
+  --line-strong: rgb(255 255 255 / 0.16);
+  --ink: rgb(255 255 255 / 0.92);
+  --ink-2: rgb(255 255 255 / 0.66);
+  --ink-3: rgb(255 255 255 / 0.48);
+  --brand: #6ccb9c;
+  --brand-ink: #0b1510;
+  --brand-soft: rgb(108 203 156 / 0.15);
+  --lime: #b9e06a;
+  --low: #79d3a6;
+  --low-soft: rgb(121 211 166 / 0.14);
+  --low-bar: #5fbf8f;
+  --mid: #e8bd6a;
+  --mid-soft: rgb(232 189 106 / 0.14);
+  --mid-bar: #d9a648;
+  --high: #f39468;
+  --high-soft: rgb(243 148 104 / 0.15);
+  --high-bar: #ec7a48;
+  --alert: #f48a83;
+  --alert-soft: rgb(244 138 131 / 0.15);
+  --scrim: rgb(0 0 0 / 0.55);
+  --shadow-float: 0 10px 30px rgb(0 0 0 / 0.4), 0 0 0 1px rgb(255 255 255 / 0.06);
+  --shadow-sheet: 0 -8px 40px rgb(0 0 0 / 0.5);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-lime: var(--lime);
+  --color-low: var(--low);
+  --color-low-soft: var(--low-soft);
+  --color-low-bar: var(--low-bar);
+  --color-mid: var(--mid);
+  --color-mid-soft: var(--mid-soft);
+  --color-mid-bar: var(--mid-bar);
+  --color-high: var(--high);
+  --color-high-soft: var(--high-soft);
+  --color-high-bar: var(--high-bar);
+  --color-alert: var(--alert);
+  --color-alert-soft: var(--alert-soft);
+
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+
+  /* 글자 크기: ×1.25 비율 다섯 단계 + 큰 숫자 */
+  --text-cap: 13px;
+  --text-cap--line-height: 1.5;
+  --text-body: 16px;
+  --text-body--line-height: 1.5;
+  --text-title: 20px;
+  --text-title--line-height: 1.35;
+  --text-h2: 25px;
+  --text-h2--line-height: 1.2;
+  --text-h1: 32px;
+  --text-h1--line-height: 1.1;
+  --text-display: 56px;
+  --text-display--line-height: 1;
+
+  /* 모서리: 칩 8 · 버튼 12 · 카드 20 · 시트 28 */
+  --radius-chip: 8px;
+  --radius-btn: 12px;
+  --radius-card: 20px;
+  --radius-sheet: 28px;
+
+  --shadow-float: var(--shadow-float);
+  --shadow-sheet: var(--shadow-sheet);
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--brand-soft);
+  }
+}
+
+@layer utilities {
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .tight {
+    letter-spacing: -0.02em;
+  }
+  /* 눌렀을 때 바로(100ms 안) 살짝 들어가는 반응 */
+  .press {
+    transition: transform 90ms var(--ease-out), background-color 120ms, opacity 120ms;
+  }
+  .press:active {
+    transform: scale(0.98);
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .pb-safe-nav {
+    /* 폰 하단 떠 있는 탭(64) + 여백 + 홈 인디케이터 */
+    padding-bottom: calc(112px + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 768px) {
+    .pb-safe-nav {
+      padding-bottom: 48px;
+    }
+  }
+}
+
+/* 숫자가 처음 나타날 때 */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 260ms var(--ease-out) both;
+}
+
+/* 시트가 열려 있는 동안 뒤 화면은 스크롤되지 않는다 */
+html:has(dialog.sheet[open]) {
+  overflow: hidden;
+}
+
+/* ── 시트·대화상자: 폰은 아래에서 올라오고, 넓은 화면은 가운데에서 커진다 ── */
+dialog.sheet {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  inset: auto 0 0 0;
+  background: transparent;
+  color: inherit;
+  overflow: visible;
+}
+dialog.sheet::backdrop {
+  background: var(--scrim);
+  opacity: 0;
+  transition: opacity 250ms var(--ease-out), overlay 250ms allow-discrete, display 250ms allow-discrete;
+}
+dialog.sheet[open]::backdrop {
+  opacity: 1;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+@starting-style {
+  dialog.sheet[open]::backdrop {
+    opacity: 0;
+  }
+}
+dialog.sheet > .sheet-panel {
+  transform: translateY(100%);
+  transition: transform 250ms var(--ease-out);
+}
+dialog.sheet[open] > .sheet-panel {
+  transform: translateY(var(--drag, 0px));
+}
+@starting-style {
+  dialog.sheet[open] > .sheet-panel {
+    transform: translateY(100%);
+  }
+}
+dialog.sheet.closing > .sheet-panel {
+  transform: translateY(100%);
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-in);
+}
+dialog.sheet.closing::backdrop {
+  opacity: 0;
+  transition-duration: 160ms;
+}
+dialog.sheet.dragging > .sheet-panel {
+  transition: none;
+}
+
+@media (min-width: 768px) {
+  dialog.sheet {
+    inset: 0;
+    display: none;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 32px;
+  }
+  dialog.sheet[open] {
+    display: grid;
+  }
+  dialog.sheet > .sheet-panel,
+  dialog.sheet[open] > .sheet-panel {
+    transform: none;
+    opacity: 1;
+    transition: transform 250ms var(--ease-out), opacity 250ms var(--ease-out);
+  }
+  @starting-style {
+    dialog.sheet[open] > .sheet-panel {
+      transform: scale(0.96);
+      opacity: 0;
+    }
+  }
+  dialog.sheet.closing > .sheet-panel {
+    transform: scale(0.97);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
